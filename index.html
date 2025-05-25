@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Truth or Dare Game</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #ffe6f0;
+      text-align: center;
+      padding: 20px;
+      color: #e91e63;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+    }
+
+    .button-group {
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 12px 20px;
+      font-size: 1.2rem;
+      margin: 10px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background-color: #e91e63;
+      color: white;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background-color: #d81b60;
+    }
+
+    .box {
+      width: 80%;
+      max-width: 500px;
+      height: 200px;
+      margin: 30px auto;
+      background-color: white;
+      border-radius: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      font-weight: bold;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      cursor: pointer;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Truth or Dare Game</h1>
+  <div class="button-group">
+    <button onclick="startGame('truth')">Truth</button>
+    <button onclick="startGame('dare')">Dare</button>
+  </div>
+
+  <div class="box" onclick="stopGame()">Click to Stop</div>
+
+  <script>
+    const truthOptions = [
+      "When was the last time you cried? 😢",
+      "Have you ever lied to your best friend? 🤐",
+      "What's your biggest fear? 😨",
+      "Who was your first crush? ❤️",
+      "What's a secret you never told anyone? 🤫",
+      "What's your weirdest dream? 🛌",
+      "Have you ever had a crush on a teacher? 👩‍🏫",
+      "What's your most embarrassing moment? 😳",
+      "Who do you like right now? 😉",
+      "What's something you regret? 🥺"
+    ];
+
+    const dareOptions = [
+      "Give someone a hug! 🤗",
+      "Do 10 jumping jacks! ‍🏋️‍♀️",
+      "Sing a song out loud! 🎤",
+      "Dance for 10 seconds! 💃",
+      "Send a kiss emoji to someone! 😘",
+      "Do a silly face! 😜",
+      "Act like a monkey for 5 seconds! 🐒",
+      "Say something nice to the person next to you! 🌟",
+      "Take a sip of water! 💧",
+      "Pretend to be a cat! 🐱"
+    ];
+
+    let currentInterval;
+    let currentList = [];
+    let usedOptions = {
+      truth: [],
+      dare: []
+    };
+
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+
+    function startGame(type) {
+      clearInterval(currentInterval);
+      currentList = shuffle([...((type === 'truth') ? truthOptions : dareOptions)]);
+
+      // Refill list if all used
+      if (usedOptions[type].length === currentList.length) {
+        usedOptions[type] = [];
+      }
+
+      const availableOptions = currentList.filter(item => !usedOptions[type].includes(item));
+      let index = 0;
+
+      currentInterval = setInterval(() => {
+        document.querySelector('.box').innerText = availableOptions[index];
+        index = (index + 1) % availableOptions.length;
+      }, 100);
+
+      document.querySelector('.box').dataset.type = type;
+      document.querySelector('.box').dataset.running = "true";
+    }
+
+    function stopGame() {
+      if (document.querySelector('.box').dataset.running !== "true") return;
+
+      clearInterval(currentInterval);
+      const finalText = document.querySelector('.box').innerText;
+      const type = document.querySelector('.box').dataset.type;
+      usedOptions[type].push(finalText);
+      document.querySelector('.box').dataset.running = "false";
+    }
+  </script>
+</body>
+</html>
